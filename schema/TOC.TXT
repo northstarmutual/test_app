@@ -1,0 +1,7 @@
+.Table Of Contents
+*    .D.    .      .   .                    .                                                                               .
+*Cab .w.Rpt .Lines .Typ.Name                .Title                                                                          .
+*====.=.====.======.===.====================.===============================================================================.
+	 472 E    0     39 BIS
+	 472 E    1      9 BIS SCHEMAINDEX_         SCHEMAINDEX_
+	 472 E    2      8 BIS home                 home

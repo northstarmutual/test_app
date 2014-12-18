@@ -1,0 +1,258 @@
+.Object Name: HTMLTAGS_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ecab$,B,0001 .
+@.    #---------------------------------------------------------------------------------------------
+@.    #
+@.    #  checkBoxTag_
+@.    #
+@.    #  @     call,HTMLTAGS_ checkBoxTag_ ('field','value','chkd','desc','opts') .
+@.    #
+@.    #  - `<field>` input name (name="...")
+@.    #  - `<value>` html input value (value="...")
+@.    #  - `<chk>` set to y if you want this to be checked (checked)
+@.    #  - `<desc>` description next to checkbox `<input> My description here...`
+@.    #  - `<attr>` can pass up to 256 onto html tag (style="color", class="...", id="...", etc...)
+@.    #
+@.    #---------------------------------------------------------------------------------------------
+@0001:(<field>,<value>,<chk>,<desc>,<attr>) .
+@     ldv,p <ifld>h12=<field> .
+@     call,FORMVAL_ 0200 (<ifld>,<stat>h2) .
+@     ldv <name>s28='r-'<*model>(p)'-'<ifld> .
+@     if <chk> eq y  ldv,p <checked>s20='checked="checked"' . ; ldv <checked>s0 .
+@.
+<input type="checkbox" name="<%<name>(p)<stat>(p)%>" value="<%<value>(p)%>"
+@     if <chk> eq y . ; gto lin+2 .
+  <%<checked>(p)%>
+@     if <attr> gt '' . ; gto lin+2 .
+  <%<attr>(p)%>
+@     call 0200 (<ifld>) .
+@     lcv,lin+1 '' <attr> 'id='  gto lin+2 .
+  id="<%<ifld>(p)<stat>%>"
+> <%<desc>(p)%>
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #
+@.    #  radioBtnTag_
+@.    #
+@.    #  @     call,HTMLTAGS_ radioBtnTag_ ('field','value','chkd','desc','opts') .
+@.    #
+@.    #  - `<field>` input name (name="...")
+@.    #  - `<value>` html input value (value="...")
+@.    #  - `<chk>` set to y if you want this to be checked (checked)
+@.    #  - `<desc>` description next to checkbox `<input> My description here...`
+@.    #  - `<attr>` can pass up to 256 onto html tag (style="color", class="...", id="...", etc...)
+@.    #
+@.    #---------------------------------------------------------------------------------------------
+@0005:(<field>,<value>,<chk>,<desc>,<attr>) .
+@     ldv,p <ifld>h12=<field> .
+@     call,FORMVAL_ 0200 (<ifld>,<stat>h2) .
+@     ldv <name>s28='r-'<*model>(p)'-'<ifld> .
+@     if <chk> eq y  ldv,p <checked>s20='checked="checked"' . ; ldv <checked>s0 .
+@.
+<input type="radio" name="<%<name>(p)<stat>(p)%>" value="<%<value>(p)%>"
+@     if <chk> eq y . ; gto lin+2 .
+  <%<checked>(p)%>
+@     if <attr> gt '' . ; gto lin+2 .
+  <%<attr>(p)%>
+@     call 0200 (<ifld>) .
+@     lcv,lin+1 '' <attr> 'id='  gto lin+2 .
+  id="<%<ifld>(p)<stat>%>"
+> <%<desc>(p)%>
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #
+@.    #  textFieldTag_
+@.    #
+@.    #  @     call,HTMLTAGS_ textFieldTag_ ('field','value','opts') .
+@.    #
+@.    #  - `<field>` input name (name="...")
+@.    #  - `<value>` html input value (value="...")
+@.    #  - `<attr>` can pass up to 256 onto html tag (style="color", class="...", id="...", etc...)
+@.    #
+@.    #---------------------------------------------------------------------------------------------
+@0010:(<field>,<value>,<attr>) .
+@     ldv,p <ifld>h12=<field> .
+@     call,FORMVAL_ 0200 (<ifld>,<stat>h2) .
+@     ldv <name>s28='r-'<*model>(p)'-'<ifld> .
+@.
+<input type="text" name="<%<name>(p)<stat>(p)%>" value="<%<value>(p)%>"
+  <%<attr>(p)%>
+@     call 0200 (<ifld>) .
+@     lcv,lin+1 '' <attr> 'id='  gto 0011 .
+  id="<%<ifld>(p)<stat>(p)%>">
+@     gto lin+3 .
+@0011:.
+>
+@.
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  selectTag_   NOT IMPLEMENTED...
+@.    #---------------------------------------------------------------------------------------------
+@0015:(<field>,<value>,<optorsel>,<attr>) .
+@     ldv,p <ifld>h12=<field> .
+@     call,FORMVAL_ 0200 (<ifld>,<stat>h2) .
+@     rnm -1  lzr,-1 ,,<sln>i3  .                                          Save incomming web result
+@     ldv <name>s28='r-'<*model>(p)'-'<ifld> .
+@.
+<select name="<%<name>(p)<stat>(p)%>"
+  <%<attr>(p)%>
+@     call 0200 (<ifld>) .
+@     lcv,lin+1 '' <attr> 'id='  gto lin+2 .
+  id="<%<ifld>(p)<stat>(p)%>"
+@.
+>
+@0017:inc <sln>  rdl,-1,<sln> .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #
+@.    #  labelTag_
+@.    #
+@.    #  call,HTMLTAGS_ labelTag_ ('field','value','class="my-class" id="my-id"') .
+@.    #
+@.    #  - `<field>` input name (name="...")
+@.    #  - `<value>` label description.  Defaults to value from the SCHEMA_ but can pass a longer
+@.    #              name if needed.  Based on SCHEMA_ will also populate with a * if the field is
+@.    #              required.
+@.    #  - `<attr>` can pass up to 256 onto html tag (style="color", class="...", id="...", etc...)
+@.    #
+@.    #---------------------------------------------------------------------------------------------
+@0020:(<field>,<value>,<attr>) .
+@     ldv,p <ifld>h12=<field> .
+@     call,FORMVAL_ 0200 (<ifld>,<stat>h2) .
+@     ldv <name>s28='r-'<*model>(p)'-'<ifld> .
+@     ldv <r>h1 .
+@     fdr,SCHEMA_ '' 'Field' ¬,<ifld>  rln 'Label','Req' <tvalue>s,<req>h .
+@     if <req> gt ''  ldv <r>='*' . ; ldv <r>='' .
+@     lcv,lin+1 '' <value> '*'  ldv <r>=' ' .                                     Dont display twice
+@     if <value> eq ' '  ldv <value>s80=<tvalue> .
+@.
+<label for="<%<name>(p)<stat>(p)%>"
+@.
+@     call 0210 (<ifld>) .
+@.
+  <%<attr>(p)%>>
+  <%<value>(p) <r>%>
+</label>
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #
+@.    #  hiddenFieldTag_
+@.    #
+@.    #  call,HTMLTAGS_ hiddenFieldTag_ ('name',<value>,'id="uniqueid"') .
+@.    #
+@.    #  - `<field>` input name (name="...")
+@.    #  - `<value>` html input value.  when intializing leave this blank.  if re-visiting a page
+@.    #              pass the value from the database.
+@.    #  - `<attr>` can pass up to 256 onto html tag (id="...", etc...)
+@.    #
+@.    #---------------------------------------------------------------------------------------------
+@0025:(<field>,<value>,<attr>) .
+@     ldv,p <ifld>h12=<field> .
+@     call,FORMVAL_ 0200 (<ifld>,<stat>h2) .
+@     ldv <name>s28='r-'<*model>(p)'-'<ifld> .
+@.
+<input type="hidden" name="<%<name>(p)<stat>(p)%>" value="<%<value>(p)%>"
+  id="<%<ifld>(p)<stat>(p)%>"
+  <%<attr>(p)%>
+@.
+@     call 0200 (<ifld>) .
+@.
+>
+@.
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  textAreaTag_
+@.    #
+@.    #  call,HTMLTAGS_ textAreaTag_ ('name',<value>,'id="uniqueid"') .
+@.    #
+@.    #  - `<field>` input name (name="...")
+@.    #  - `<value>` html input value.  when intializing leave this blank.  if re-visiting a page
+@.    #              pass the value from the database.
+@.    #  - `<attr>` can pass up to 256 onto html tag (id="...", etc...)
+@.    #
+@.    #---------------------------------------------------------------------------------------------
+@0030:(<field>,<value>,<attr>) .
+@     def,c <maxsz>i2,<field>  if <maxsz> gt 10 xxx . ; .
+@     ldv,p <ifld>h10=<field> .
+@     call,FORMVAL_ 0200 (<ifld>,<stat>h2) .
+@     ldv <name>s28='m-'<ifld> .
+@     def,q <numremarks>i3,<value> .
+@.
+<textarea name="<%<name>(p)<stat>(p)%>"
+@     if <attr> eq ''  gto lin+2 . ; .
+  <%<attr>(p)%>
+@     call 0200 (<ifld>) .
+@     lcv,lin+1 '' <attr> 'id='  gto 0031 .
+  id="<%<ifld>(p)<stat>(p)%>">
+@     gto lin+3 .
+@0031:.
+>
+@     ldv <index>i3=0 .
+@0032:inc <index> .
+@     if <index> gt <numremarks>  gto 0033 .
+@     if <value>[index] eq ''  gto 0032 . ; .
+<%<value>[<index>]%>
+@     gto 0032 .
+@0033:.
+</textarea>
+@.
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #
+@.    #  inputFieldTag_
+@.    #
+@.    #  call,HTMLTAGS_ inputFieldTag_ ('name',<value>,'id="uniqueid"') .
+@.    #
+@.    #  - `<field>` input name (name="...")
+@.    #  - `<value>` html input value.  when intializing leave this blank.  if re-visiting a page
+@.    #              pass the value from the database.
+@.    #  - `<attr>` can pass up to 256 onto html tag (id="...", etc...)
+@.    #
+@.    #---------------------------------------------------------------------------------------------
+@0035:(<field>,<value>,<attr>,<type>) .
+@.
+@     if <type> eq ''  ldv <type>h4="text". ; .
+@     ldv,p <ifld>h12=<field> .
+@     call,FORMVAL_ 0200 (<ifld>,<stat>h2) .
+@     ldv <name>s28='r-'<*model>(p)'-'<ifld> .
+@.
+<input type="<%<type>(p)%>" name="<%<name>(p)<stat>(p)%>" value="<%<value>(p)%>"
+  <%<attr>(p)%>
+@     call 0200 (<ifld>) .
+@     lcv,lin+1 '' <attr> 'id='  gto 0036 .
+  id="<%<ifld>(p)<stat>(p)%>">
+@     gto lin+3 .
+@0036:.
+>
+@.
+@     return .
+@.
+@.    ##############################################################################################
+@.    #  Subroutine to get HTML Attributes from table
+@.    ##############################################################################################
+@0200:(<field>) .
+@     srh,SCHEMA_ 'dpl(¬)' 'Field' ¬,<field> .
+@     lzr,-0 <lns>i7,,<hln>i7  if <lns> gt <hln> . ; gto 0205 .
+@     inc <hln>  rdl,-0,<hln>,0205 1-1,2-997 <lt>h,<attrs>s .
+@     if <lt> eq A . ; gto lin-1 .
+<%<attrs>(p)%>
+@     gto lin-3 .
+@0205:return .
+@.    ##############################################################################################
+@.    #  Subroutine to get <label> Attributes from table
+@.    ##############################################################################################
+@0210:(<field>) .
+@     srh,SCHEMA_ 'dpl(¬)' 'Field' ¬,<field> .
+@     lzr,-0 <lns>i7,,<hln>i7  if <lns> gt <hln> . ; gto 0215 .
+@     inc <hln>  rdl,-0,<hln>,0215 1-1,2-997 <lt>h,<attrs>s .
+@     if <lt> eq L . ; gto lin-1 .
+<%<attrs>(p)%>
+@     gto lin-3 .
+@0215:return .

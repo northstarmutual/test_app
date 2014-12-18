@@ -1,0 +1,30 @@
+.Object Name: Assets
+*          .                              .W.IE      .    .     .
+*Type      .File                          .S.COMPAT  .Load.Async.
+*==========.==============================.=.========.====.=====.
+¬stylesheet¬main                          ¬Y¬        ¬head¬     ¬
+¬stylesheet¬bootstrap-ie7fix              ¬Y¬lt IE 8 ¬head¬     ¬
+¬javascript¬html5shiv                     ¬Y¬lt IE 9 ¬head¬     ¬
+¬javascript¬respond                       ¬Y¬lt IE 9 ¬head¬     ¬
+¬javascript¬jquery.min                    ¬Y¬        ¬head¬     ¬
+¬javascript¬jQuery.inputmask              ¬Y¬        ¬body¬async¬
+¬javascript¬jQuery.inputmask.date         ¬Y¬        ¬body¬async¬
+¬javascript¬jquery.formatCurrency         ¬Y¬        ¬body¬async¬
+¬javascript¬bootstrap3                    ¬Y¬        ¬body¬async¬
+¬javascript¬spin                          ¬Y¬        ¬body¬async¬
+ xxxxxxxxxx FILE TYPE
+            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx FILE NAME
+                                           x Y = Webscript enabled  <html>
+                                           x   = Webscript disabled [html]
+                                             xxxxxxxx Internet Explorer Conditional Cmnts
+                                                      xxxx head - Loads assets in <head> blocking
+                                                                  Necessary items needed before page rendering begins
+
+                                                      xxxx body - Loads assets b4 </body> loaded at end of page load
+                                                                  Still needed by page but not before rendering
+
+                                                           xxxxx - This will allow for scripts to be downloaded asynchronously.
+                                                                   It's only supported by newer browsers, but it allows multiple
+                                                                   scripts to be downloaded at once.  Check the interwebs for more
+                                                                   info.  Steve Souders is a good one to read.
+

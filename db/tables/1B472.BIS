@@ -1,0 +1,62 @@
+.DEFINES
+.
+.
+.
+*      .                   .                       .                               .                    .
+*DEFINE.CONST              .VALUE                  .DESC                           .PARENT CATEGORY     .
+*======.===================.=======================.===============================.====================.
+:DEFINE GROWL_
+:DEFINE SUBLCOMMON_
+:DEFINE SUBLCONFIG_
+:DEFINE appPath_
+:DEFINE chkMkDir_
+:DEFINE configVars_
+:DEFINE getCabDrwRpt_
+:DEFINE getFileName_
+:DEFINE checkBoxTag_        '0001'                  HTML Checkbox tag               ICE_MODULES_TEST
+:DEFINE hiddenFieldTag_     '0025'                  HTML Hidden Field Tag           ICE_MODULES_TEST
+:DEFINE inputFieldTag_      '0035'                  HTML Generic Input Field Tag    ICE_MODULES_TEST
+:DEFINE labelTag_           '0020'                  HTML Label tag                  ICE_MODULES_TEST
+:DEFINE radioBtnTag_        '0005'                  HTML Radio Button tag           ICE_MODULES_TEST
+:DEFINE selectTag_          '0015'                  HTML Select tag                 ICE_MODULES_TEST
+:DEFINE textAreaTag_        '0030'                  HTML Text Area Tag              ICE_MODULES_TEST
+:DEFINE textFieldTag_       '0010'                  HTML Text Field tag             ICE_MODULES_TEST
+:DEFINE NSCONFIG_           '444,f,11'              ICE Module config               ICE_Modules_Test
+:DEFINE NSERRORSCN_         '444,f,9 0100'          ICE Module errors screen        ICE_Modules_Test
+:DEFINE NSEXTASSETS_        '444,f,14'              ICE Module Ext Assets Loader    ICE_Modules_Test
+:DEFINE NSSTMGMTAPI_        '444,f,13'              ICE Module St Mgmt Wrapper      ICE_Modules_Test
+:DEFINE ICEDATEFMT_         '444,b,7'               ICE Date Formats                ICE_Modules_Test_Tab
+:DEFINE ICEFLASHMSGSTBL_    '444,b,9'               ICE Error Messages Layout       ICE_Modules_Test_Tab
+:DEFINE ERRORDSP_           'ECAB$,C,6 0050()'      DISPLAY FLASH ERROR MSGS        LIB
+:DEFINE ERRORSCN_           'ECAB$,C,6 0100'        DISPLAY ERROR SCREEN            LIB
+:DEFINE ERRORS_             'ECAB$,C,6'             ERROR DISPLAY ROUTINE           LIB
+:DEFINE EXTASSETS_          'ECAB$,C,14'            OUTPUTS FILE ONTO PAGE          LIB
+:DEFINE FLASHMSG_           'ECAB$,C,7 0050()'      DISPLAY FLASH MSGS              LIB
+:DEFINE FLASH_              'ECAB$,C,7'             SET FLASH MSG                   LIB
+:DEFINE FORMVAL_            'ECAB$,C,5'             FORM VALIDATION ROUTINE         LIB
+:DEFINE HTMLTAGS_           'ECAB$,C,8'             INPUT TAG HELPERS               LIB
+:DEFINE HTMLTOPDF_          'ECAB$,C,10'            CAPTURE INPUT FOR ROUTINE       LIB
+:DEFINE LOADASSETS_         'ECAB$,C,13'            OUTPUT CSS, JS, or IMGS         LIB
+:DEFINE REDIRECT_           'ECAB$,C,12'            PAGE REDIRECTION                LIB
+:DEFINE ALERTSTBL_          'ECAB$,D,8'             APPLICATION ALERT MESSAGES      LIB_TABLES
+:DEFINE ASSETSINDX_         'ECAB$,D,2'             APPLICATION ASSET INDEX         LIB_TABLES
+:DEFINE ASSETS_             'ECAB$,D'               APPLICATION ASSETS              LIB_TABLES
+:DEFINE ERRORMSGS_          'ECAB$,D,6'             APPLICATION ERROR MESSAGES      LIB_TABLES
+:DEFINE MODELINDEX_         'ECAB$,I,1'             MODEL INDEX                     MODELS
+:DEFINE MODEL_              'ECAB$,I'               MODEL DRAWER                    MODELS
+:DEFINE EXTASSETSTBLS_      '410,b'                 External Asset Tables           Misc_Test_Tables
+:DEFINE delSS_              '0025'                  Removes Server Side Var         NSSTMGMTAPI Function
+:DEFINE getSS_              '0030'                  Gets value of Server Side Var   NSSTMGMTAPI Function
+:DEFINE setSS_              '0020'                  Sets value of Server Side Var   NSSTMGMTAPI Function
+:DEFINE smRslt_             '0010'                  RESTORE REPLACE SAVE DESTROY    NSSTMGMTAPI Function
+:DEFINE SCHEMAINDEX_        'ECAB$,E,1'             SCHEMA INDEX TABLE              SCHEMA
+:DEFINE SCHEMA_             'ECAB$,E,<*schemarpt>'  SCHEMA TABLE                    SCHEMA
+:DEFINE BREADCRUMBS_        'ECAB$,H,1008'          BREADCRUMB NAVIGATION           VIEWS
+:DEFINE CONTACT_            'ECAB$,H,1004'          APP CONTACT                     VIEWS
+:DEFINE CONTAINER_          'ECAB$,H,1003'          APP CONTAINER                   VIEWS
+:DEFINE FOOTER_             'ECAB$,H,1005'          APP FOOTER                      VIEWS
+:DEFINE HEADER_             'ECAB$,H,1001'          APP HEADER                      VIEWS
+:DEFINE HTMLHEAD_           'ECAB$,H,1000'          BEGIN APP HTML                  VIEWS
+:DEFINE NAV_                'ECAB$,H,1002'          APP NAVIGATION                  VIEWS
+:DEFINE VIEWINDEX_          'ECAB$,H,1'             VIEW INDEX                      VIEWS
+:DEFINE VIEW_               'ECAB$,H'               VIEW DRAWER                     VIEWS

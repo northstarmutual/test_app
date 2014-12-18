@@ -1,0 +1,32 @@
+.Object Name: HEADER_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@0001:(<title>) .
+@.
+@     call,EXTASSETS_ 0051 ('NSLOGO.GIF',<src>s998,<width>s6,<height>s6,'') .
+@. @     call,EXTASSETS_ 0051 ('UMBRELLA.PNG',<usrc>s998,'','','') .
+@     CALL,NSSTMGMTAPI_ getSS_ ('ssHOMEMENU',<HOMEMENU>s998) .
+@.
+      <!-- (<%LOCATION: ECAB$,AEDRW$,ERPT$%>) -->
+      <!-- Top Page Header  COMMON -->
+      <div class="navbar pg-header">
+        <div class="navbar-inner">
+          <div class="col-6">
+            <h1 class="brand">
+              <a href="<%<HOMEMENU>(p)%>">
+                <img src="<%<src>(p)%>" alt="North Star Mutual Insurance Company"
+                  class="img-responsive" title="North Star Mutual Insurance Company">
+              </a>
+            </h1>
+          </div>
+          <div class="col-6">
+            <h1 class="pg-title">
+            <%<title>(p)%>
+@. <img src="<%<usrc>(p)%>" title="...">
+            </h1>
+          </div>
+        </div><!-- /.navbar-inner -->
+      </div><!-- /.navbar .pg-header -->
+@.
+@     return .

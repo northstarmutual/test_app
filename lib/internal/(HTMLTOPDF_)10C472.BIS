@@ -1,0 +1,25 @@
+.Object Name: HTMLTOPDF_
+*    Version: 0001
+*===================================================================================================
+:INCLUDE,ECAB$,B,0001 .
+@.    #---------------------------------------------------------------------------------------------
+@.    # @.
+@.    # @.    #  This will put a form on the page that will generate a PDF document
+@.    # @.    #  of the web page that you are currently on
+@.    # @     call,HTMLTOPDF_ 0001 ('PDFNAME') .
+@.    # @.
+@.    #---------------------------------------------------------------------------------------------
+@0001:(<PDFNAME>) .
+@     rnm -8  rsr,-8 0001 .
+<form method="post" action="<%../<*GAspAlsDir>(p)/activePDF.asp?%>" id="activePDF" target="_blank">
+  <input type="hidden" name="PDFname" value="<%<PDFNAME>(p)%>">
+  <input type="hidden" name="pageOreintation" value="1" /><!-- 0 eq Portrait 1 eq Landscape -->
+  <input type="hidden" name="iuserid" value="<%<SSUSERID>(p)%>">
+</form>
+@.    #  Handle submitting the form
+<script>
+$("#activePDF-trigger").on("click", function() {
+  $("#activePDF").submit();
+});
+</script>
+@     return .

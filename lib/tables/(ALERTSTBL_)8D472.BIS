@@ -1,0 +1,9 @@
+.Object Name: ALERTSTBL_
+*       category     .       service      .  start .  end
+*====================.====================.========.========.
+¬Misc_Test           ¬Employee_Menu       ¬20130403¬20130403¬
+          <li>
+
+              <h2 class="alert alert-info">The online and phone payment systems hosted by BillMatrix are curretnly down</h2>
+
+          </li>

@@ -1,0 +1,105 @@
+.Object Name: home
+*    Version: 0001
+*
+*===============================================================================
+:INCLUDE,ecab$,B,0001 .
+@.
+@0001:.
+@.
+@.    #  Set page model and load system variable
+@     fdr,SCHEMAINDEX_ '' 'Schema' ¬,<*model>  rln 'Rpt' <*schemarpt>i .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  N E E D E D   B Y   M U L T I P L E   A C T I O N S
+@.    #---------------------------------------------------------------------------------------------
+@.
+@.
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  D E F A U L T  A C T I O N
+@.    #---------------------------------------------------------------------------------------------
+@     if <action> eq '<action>'  ldv <action>h6='read' . ; .                                 Default
+@     if <action> eq 'read  '  gto 0020 . ; .                                         Default action
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  V A L I D A T I O N
+@.    #---------------------------------------------------------------------------------------------
+@0010:ldv <valid>h4=true .
+@.
+@.    #  Handle COMMON form validation
+@0011:inc <hln>  rdl,-3,<hln>,0012 'keyword','value' <varname>s,<value>s .
+@     fdr,SCHEMA_,,,0000 '' 'Field' ¬,<varname> .
+@     rln 'Label','Ty','Siz','Jus' <lab>s,<ty>h,<siz>i,<jus>h .
+@     xqt '@ ldv <'<varname>(p)'>'<ty><siz>(p)'=<value>' .
+@     call,FORMVAL_ 0001 (<varname>,<value>,<valid>) .
+@     lcv '' <jus> 'J'/  ldv,p <jus> .
+@     if <jus> ne ''  if <<varname>> ne ''  ldv,<jus> <<varname>> ; .
+@     gto 0011 .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  C U S T O M  V A L I D A T I O N
+@.    #---------------------------------------------------------------------------------------------
+@0012:.
+@.
+@.
+@.
+@0019:if <valid> eq true . ; gto 0199  .
+@.
+@     if <action> eq 'create'  gto 0030 . ; .                                                 Create
+@     if <action> eq 'update'  gto 0040 . ; .                                                 Update
+@     if <action> eq 'delete'  gto 0050 . ; .                                                 Remove
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  R E A D
+@.    #---------------------------------------------------------------------------------------------
+@0020:.
+@.
+@     gto 0199 .
+@.    #---------------------------------------------------------------------------------------------
+@.    #  C R E A T E
+@.    #---------------------------------------------------------------------------------------------
+@0030:.
+@.
+@     gto 0199 .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  U P D A T E
+@.    #---------------------------------------------------------------------------------------------
+@0040:.
+@.
+@     gto 0199 .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  D E L E T E
+@.    #---------------------------------------------------------------------------------------------
+@0050:.
+@.
+@     gto 0199 .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  E R R O R S
+@.    #---------------------------------------------------------------------------------------------
+@.
+@.    #  Display an error message to the user
+@0180:ldv <errmsg>s120='Test error not related to any field' .
+@     call,ERRORS_ 0001 (<errmsg>) .
+@     gto 0199 .
+@.
+@.    #  Display an error message to the user tied to a specific field
+@.    #  This should get set when a specific field doesn't pass validation
+@0181:ldv <errmsg>s120='Test error message tied to an input field' .
+@     call,ERRORS_ 0010 ('ERROR',<errmsg>,'input field name') .
+@     gto 0199 .
+@.
+@.    #  Displays error message and hide existing page.
+@.    #  Usually a session time out or a bad error that we can't recover from.
+@0182:csr .
+@     ldv <msg>s80='This is a test error that requires action by the user' .
+@     ldv <backlink>='javascript:window.close()' .
+@     ldv <alertype>h6='danger',<backwording>='Click here to close this window/tab.' .
+@     call,ERRORSCN_ (<msg>,<msg1>,<msg2>,<msg3>,<msg4>,<msg5>,\
+        <backlink>,<backwording>,<alertype>) .
+@     brk  if <run> eq y  dsx,-0 . ; .
+@     return .
+@.
+@0199:esr .

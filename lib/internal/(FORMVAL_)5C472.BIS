@@ -1,0 +1,149 @@
+.Object Name: FORMVAL_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ecab$,B,0001 .
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Form Validation:
+@.    #  Validate a specific field based on settings in SCHEMA_
+@.    #---------------------------------------------------------------------------------------------
+@0001:(<fld>,<value>,<valid>) .
+@.
+@.    #  Does keyword contain stat number?
+@.    #  If so remove the stat number to find the field in the SCHEMA table
+@     ldv,p <fldname>s20=<fld> .
+@     call 0200 (<fldname>,<stat>h2) .
+@.
+@.    #  Does keyword contain form number?
+@.    #  If so remove the form number to find the field in the SCHEMA table
+@     call 0215 (<fldname>) .
+@.
+@.    #  Validate each field in the result
+@     fdr,SCHEMA_,,,0000 '' 'Field' ¬,<fldname> .
+@     rln 1-1,'Label','Ty','Siz','DP','Req','Jus','Inp Typ','Dat Typ','Min','Max',\
+      'ReportField','Regex' <lt>h,<lab>s,<ty>h,<siz>i,<dcp>a,<req>a,<jus>h,<itp>h,\
+      <dtp>h,<min>a,<max>a,<rptfld>s,<regex>s .
+@.
+@     ldv,p <lab> .
+@     if <lt> ne '¬',(0199) ; .
+@     if <itp> eq 'textarea' . ; gto lin+4 .
+@     lcv,lin+1 '' <value> '&#13;'/'' .
+@     lcv,lin+1 '' <value> '&#10;'/'' .
+@     ldv,p <value> .
+@.
+@     xqt '@ ldv <'<fld>(p)'>'<ty><siz>(p)'=<VALUE>' .
+@     if <req> ne ''  def,p <n>i3,<<fld>>  if <n> lt <req>,(0181) .
+@     if <dtp> ne 'NUM' . ; def <n>i3,<<fld>>  if <n> eq 0,1 . ; gto 0185 .
+@     if <dtp> eq 'INT'  if <<fld>> ne '' . ; gto lin+4 .
+@     ldv,p <v1>s<siz>=<<fld>>  def,s <n>i3,<v1> .
+@     if <v1>(<n>-1) ge '0' & le '9'  dec <n>  if <n> gt 0,(lin-0) ; .
+@     if <n> gt 0,(0185) ; .
+@     if <dtp> ne 'APH' . ; def <n>i3,<<fld>>  if <n> eq 0,2 . ; gto 0185 .
+@     if <req> eq ''  if <<fld>> eq '',(lin+4) ; .
+@     if <dtp>(1-1) ne 'D' . ; gto lin+3 .
+@     if <min> ne ''  if <<fld>> lt <min>,(0182) ; .
+@     if <max> ne ''  if <<fld>> gt <max>,(0183) ; .
+@     lcv '' <jus> 'J'/  ldv,p <jus> .
+@     if <jus> ne ''  if <<fld>> ne ''  ldv,<jus> <<fld>> ; .
+@.
+@.    #  Date validation
+@     if <dtp>(1-1) eq 'D'  if <dtp>(2-2) ge 0 & le 20 . ; gto 0010 .
+@     if <req> eq ''  if <<fld>> eq '',(0199) ; .
+@     ldv,z <fmt>i2=<dtp>(2-2)  def,p <n>i3,<<fld>> .
+@     fdr,ICEDATEFMT_,,,0184 '' 'FN' ¬,<fmt> .
+@     rln 'Format','Min','Siz' <for>h,<1>i,<2>i .
+@     if <n> lt <1>,(0184) ; if <n> gt <2>,(0184) ; .
+@     juv,r <fmt>  ldv,p <fmt>,<dat>s18=<<fld>> .
+@     xqt '@IF DATE'<fmt>'$ eq 'tic$'DATE'<fmt>'$'tic$',(0184) ; .' .
+@     dc d11=d<fmt>'('<dat>')' <n>a8  if <n>(1-1) eq '*',(0184) ; .
+@     if <min> eq '',(lin+4) ; .
+@     ldv,p <min>  if <min>(0-1) eq '$'  xqt '@LDV,wp <MIN>h18='<min> ; .
+@     dc d<fmt>=d<fmt>'('<min>')' <n>h18  if <n>(1-1) eq '*',(lin+2) ; .
+@     if,d<fmt> <<fld>> lt <min>,(0182) ; .
+@     if <max> eq '',(lin+4) ; .
+@     ldv,p <max>  if <max>(0-1) eq '$'  xqt '@LDV,wp <MAX>h18='<max> ; .
+@     dc d<fmt>=d<fmt>'('<max>')' <n>h18  if <n>(1-1) eq '*',(lin+2) ; .
+@     if,d<fmt> <<fld>> gt <max>,(0183) ; .
+@.
+@.    #  Regex validation
+@0010:if <regex> gt ' '  if <value> gt ' ' . ; gto 0199 .
+@     ldv,p <regex>,<value> .
+@     call,"JSFORMVAL" validate(<value>,<regex>,<valid>h1) .
+@     if <valid> eq 'false'  gto 0186 . ; .
+@     gto 0199 .
+@.
+@.    #  Error section
+@0181:.
+@     if <req> gt 1,(lin+3) ; .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('REQFIELD',<lab>,<fld>) .
+@     gto 0190 .
+@     ldv <p>s80=<lab>¬<req> .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('REQCHARS',<p>,<fld>) .
+@     gto 0190 .
+@0182:.
+@     ldv <p>s80=<lab>¬<min> .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('MINVALUE',<p>,<fld>) .
+@     gto 0190 .
+@0183:.
+@     ldv <p>s80=<lab>¬<max> .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('MAXVALUE',<p>,<fld>) .
+@     gto 0190 .
+@0184:.
+@     ldv <p>s80=<lab>¬<<fld>>¬<for> .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('INVDATE',<p>,<fld>) .
+@     gto 0190 .
+@0185:.
+@     if <dtp> eq 'NUM' . ; gto lin+2 .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('INVNUMBER',<lab>,<fld>) .
+@     if <dtp> eq 'INT' . ; gto lin+2 .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('INVINTEGER',<lab>,<fld>) .
+@     if <dtp> eq 'APH' . ; gto lin+2 .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('INVALPHA',<lab>,<fld>) .
+@     gto 0190 .
+@0186:.
+@     ldv <p>s80=<lab>¬<<fld>>¬<for> .
+@     ldv <valid>=n  call,ERRORS_ 0010 ('INVALID',<p>,<fld>) .
+@     gto 0190 .
+@0190:.
+@     gto 0199 .
+@.
+@0199:.
+@     return .
+@.
+@.    #  Does keyword contain stat number?
+@.    #  If so remove the stat number to find the field in the SCHEMA table
+@0200:(<fld>,<stat>) .
+@     ldv,p <t>s20=<fld>  def,s <sz>i3,<t>  if <sz> gt 2 . ; gto 0205 .
+@     def <ty>h1,<t>(0-2)  if <ty> eq 1 . ; gto 0205 .
+@     dec,2 <sz>  ldv,p <t1>s20=<t>(1-<sz>) .
+@     inc <sz>  ldv,z <stat>=<fld>(<sz>-0) .
+@     ldv,p <fld>=<t1> .
+@.
+@0205:.
+@     ldv,p <stat> .
+@     return .
+@.
+@.    #  Does keyword contain stat number?
+@.    #  If so remove the stat number to find the field in the SCHEMA table
+@0210:(<fld>,<siz>) .
+@.
+@.    #  Does keyword contain stat number?
+@.    #  If so remove the stat number to find the field in the SCHEMA table
+@     call 0200 (<fld>,<stat>h2) .
+@.
+@.    #  Validate each field in the result
+@     fdr,SCHEMA_,,,0000 '' 'Field' ¬,<fld> .
+@     rln 1-1,'Label','Ty','Siz','DP','Req','Jus','Inp Typ',\
+      'Dat Typ','Min','Max' \
+      <lt>h,<lab>s,<ty>h,<siz>i,<dcp>a,<req>a,<jus>h,<itp>h,<dtp>h,\
+      <min>a,<max>a  ldv,p <lab> .
+@.
+@     return .
+@.
+@.    #  Does keyword contain a form name?
+@.    #  If so remoe the form name to find the field in the SCHEMA table
+@0215:(<fld>) .
+@.
+@     lcv,lin+2 '' <fld> <*MODEL>(p)/'' .                                  Remove form name from fld
+@     ldv,p <fld> .                                                                Remove any spaces
+@.
+@     return .

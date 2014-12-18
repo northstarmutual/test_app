@@ -1,0 +1,10 @@
+.Table Of Contents
+*    .D.    .      .   .                    .                                                                               .
+*Cab .w.Rpt .Lines .Typ.Name                .Title                                                                          .
+*====.=.====.======.===.====================.===============================================================================.
+	 472 D    0     39 BIS
+	 472 D    1      8 BIS LIBTABINDEX_         LIBTABINDEX_
+	 472 D    2     11 BIS ASSETINDX_           ASSETINDX_
+	 472 D    3     31 BIS Assets               Assets
+	 472 D    6     40 BIS ERRORMSGS_           ERRORMSGS_
+	 472 D    8     10 BIS ALERTSTBL_           ALERTSTBL_

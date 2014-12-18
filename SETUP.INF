@@ -1,0 +1,16 @@
+
+[REVISION]
+ Level           = 0.0.2
+[NAME]
+ Name            = test_app
+[TITLE]
+ Title           =
+[DRAWERS]
+ Drawer          = B,998,tables
+ Drawer          = C,132,lib
+ Drawer          = D,998,lib_tables
+ Drawer          = E,256,schema
+ Drawer          = F,132,test_app
+ Drawer          = G,256,params
+ Drawer          = H,132,views
+ Drawer          = I,132,models

@@ -1,0 +1,252 @@
+.Object Name: ERRORS_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ecab$,B,0001 .
+@.    #---------------------------------------------------------------------------------------------
+@.    #  ErrorResult Routine:
+@.    #  This result will get saved as a state mgmt result and will be shown to the user
+@.    #  when the variable <errrslt> is set to Y.
+@.    #---------------------------------------------------------------------------------------------
+@0001:(<errmsg>) .
+@     call,NSSTMGMTAPI_ getSS_ ('ssERRORRSLT',<errrslt>h1) .
+@     if <errrslt> eq '' . ; gto 0005 .
+@     ldv <validation>h7=failure .
+@     brk,0,I .
+@     lzr,ICEFLASHMSGSTBL_ ,<cc>i3,<fln>i3  dec <fln> .
+@     rdc,ICEFLASHMSGSTBL_,2,<fln> 1-<cc> <hdgs>s .
+<hdgs>
+@0005:if <errrslt> eq 'y' . ; gto lin+3 .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'ErrorResult','RESTORE') .           Save Error Result
+@     rnm -1 .
+¬<errmsg>
+@     brk .
+@     lzr,-1,lin+1  add,-0,-1 .
+@     wrl,-0,3 50-12 .,<validation> .
+@     rnm -1 .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'ErrorResult','SAVE') .              Save Error Result
+@     if <errrslt> eq y,(lin+2) .
+@     call,NSSTMGMTAPI_ setSS_ ('ssERRORRSLT','Y') .
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  ErrorResult Routine:
+@.    #  This result will get saved as a state mgmt result and will be shown to the user
+@.    #  when the variable <errrslt> is set to Y.
+@.    #---------------------------------------------------------------------------------------------
+@0010:(<err>,<lab>,<fld>) .
+@     gto 0012 .
+@0011:(<err>,<lab>,<fld>,<msg>) .
+@     ldv <returnmsg>h1=Y .
+@0012:dvs,ICEFLASHMSGSTBL_ 'msgs' <msgfld>s  def,s <msz>i3,<msgfld> .
+@     lda <m>s<msz><9> .
+@     chg <cr>h1 <cr> - 19 .
+@     ldv <pt>h1=S  ldv,p <px>s<msz>=<lab> .
+@     def,q <pq>i2,<lab>  if <pq> gt 0  ldv <pt>=A  gto lin+3 ; .
+@     if <lab> ne ''  lcv,lin+1 n <lab> ' ' ; gto lin+2 .
+@     lcv b99 <lab> ' ' ,<pq>  ldv <pt>=T .
+@.
+@     ldv <typ>h3=OK,<icn>h1,<cax>s24=<err> .
+@     srh,ERRORMSGS_,,,lin+2 'd' 'ErrorId' ¬,<err>  rnm -2 .
+@     rdl,-2,7 'Typ','Ic','Caption' <typ>h,<icn>h,<cax>s .
+@     ldv <cap>s80=<cax> .
+@     lcv,lin+8 '' <cap> '%'  if <pt> eq 'A',(lin+2),'T',(lin+5) ; .
+@     lcv '' <cap> '%1'/<px>  gto lin+7 .
+@     chg <pn>i2 <pq> + 1 .
+@     dec <pn>  if <pn> lt 1,(lin+5) ; ldv,p <px>s<msz>=<lab><<pn>> .
+@     ldv,p <pp>a2=<pn>  lcv,lin-1 '' <cap> '%'<pp>/<px>  gto lin-1 .
+@     ldv <pn>i2=<pq> .
+@     if <pn> lt 0,(lin+2) ; ldv,qp <px>s<msz>=<lab>,<pn>  chg <pp>a2 <pn> + 1 .
+@     dec <pn>  ldv,p <pp>  lcv,lin-1 '' <cap> '%'<pp>/<px>  gto lin-1 .
+@.
+@     if drw2$ eq 0,(0016) ; rdl,-2,7 1-80  ldv <n>i1=0 .
+@0015:inc <n>  if <n> gt 9,(0017) ; rln,,0017 1-80 <m><<n>> .
+@     ldv <m><<n>>(1-1)=<cr> .
+@     lcv,0015 '' <m><<n>> '%'  if <pt> eq 'A',(lin+2),'T',(lin+5) ; .
+@     lcv '' <m><<n>> '%1'/<px>  gto 0015 .
+@     chg <pn>i2 <pq> + 1 .
+@     dec <pn>  if <pn> lt 1,(0015) ; ldv,p <px>s<msz>=<lab><<pn>> .
+@     ldv,p <pp>a2=<pn>  lcv,lin-1 '' <m><<n>> '%'<pp>/<px>  gto lin-1 .
+@     ldv <pn>i2=<pq> .
+@     if <pn> lt 0,(0015) ; ldv,qp <px>s<msz>=<lab>,<pn>  chg <pp>a2 <pn> + 1 .
+@     dec <pn>  ldv,p <pp>  lcv,lin-1 '' <m><<n>> '%'<pp>/<px>  gto lin-1 .
+@0016:.
+@     ldv <m><1>=<err> .
+@0017:.
+@     if <m><9>(2-0) ne '',(lin+8) ; ldv <m><9>='' .
+@     if <m><8>(2-0) ne '',(lin+7) ; ldv <m><8>='' .
+@     if <m><7>(2-0) ne '',(lin+6) ; ldv <m><7>='' .
+@     if <m><6>(2-0) ne '',(lin+5) ; ldv <m><6>='' .
+@     if <m><5>(2-0) ne '',(lin+4) ; ldv <m><5>='' .
+@     if <m><4>(2-0) ne '',(lin+3) ; ldv <m><4>='' .
+@     if <m><3>(2-0) ne '',(lin+2) ; ldv <m><3>='' .
+@     if <m><2>(2-0) ne '',(lin+1) ; ldv <m><2>='' .
+@     ldv,p <m><1>,<m><2>,<m><3>,<m><4>,<m><5>,<m><6>,<m><7>,<m><8>,<m><9> .
+@     lcv,lin+1 '' <m><1> <cr>/ .
+@     lcv,lin+1 '' <m><2> <cr>/ .
+@     lcv,lin+1 '' <m><3> <cr>/ .
+@     lcv,lin+1 '' <m><4> <cr>/ .
+@     lcv,lin+1 '' <m><5> <cr>/ .
+@     lcv,lin+1 '' <m><6> <cr>/ .
+@     lcv,lin+1 '' <m><7> <cr>/ .
+@     lcv,lin+1 '' <m><8> <cr>/ .
+@     lcv,lin+1 '' <m><9> <cr>/ .
+@.
+@.    #  If were just getting the message load it and bail out here
+@     if <returnmsg> eq Y  ldv,p <msg>=<m><1>  gto 0020 .
+@.
+@     call,NSSTMGMTAPI_ getSS_ ('ssERRORRSLT',<errrslt>h1) .
+@     ldv <validation>h7=failure .
+@     brk,0,I .
+@     lzr,ICEFLASHMSGSTBL_ ,<cc>i3,<fln>i3  dec <fln> .
+@     rdc,ICEFLASHMSGSTBL_,2,<fln> 1-<cc> <hdgs>s .
+<hdgs>
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'ErrorResult','RETRIEVE') .    Retrieve previous Error
+@     if <*gstatus> eq 0 . ; gto lin+2 .
+@     rnm -1 .
+¬<m><1>
+*<m><2>
+*<m><3>
+*<m><4>
+*<m><5>
+*<m><6>
+*<m><7>
+*<m><8>
+*<m><9>
+@     brk .
+@     tot,-0 'a' 'field' ¬,=<fld>(p) .
+@     lzr,-1,lin+1  add,-0,-1 .
+@     wrl,-0,3 50-12 .,<validation> .
+@     rnm -1 .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'ErrorResult','SAVE') .              Save Error Result
+@     if <errrslt> eq y,(lin+2) .
+@     call,NSSTMGMTAPI_ setSS_ ('ssERRORRSLT','Y') .
+@     ldv <*gerrors>=y .
+@.
+@0020:return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Show ErrorResult Routine:
+@.    #  Once the ErrorResult exists in State Mgmt this routine will display the error
+@.    #  messages and then clean up any variables and results associated with it.
+@.    #---------------------------------------------------------------------------------------------
+@0050:() .
+@     call,NSSTMGMTAPI_ getSS_ ('ssERRORRSLT',<errrslt>h1) .
+@     if <errrslt> eq '',(0199) .                                            Nothing to show... exit
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'ErrorResult','RETRIEVE') .      Retrieve Error Result
+@     rnm -1 .
+@     fdr,-1,,,0199 '' 2-1 *,= ,<ln>i3 .
+@     srh,-1 'dn@l(*)' 'msgs(1-1)' ¬,@ .
+@     cnt,-0 'c' 'msgs','field' ¬,1,2 .
+@     srh,-0 'dn@' 'msgs(1-1)' ¬,@ ,<count>i3 .
+@     rnm -2 .
+@     lzr,-1 ,,<hdg>i7  inc <hdg> .
+@     rdl,-1,3 50-12 <flashtype>h .
+@     if <count> gt 1  ldv <errmsg>h6=errors,<isare>h3=are . ; \
+                      ldv <errmsg>h5=error,<isare>h2=is .
+@. ---- Flash Failure Message(s) ----
+@     if <flashtype> eq failure . ; gto 0055 .
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          There <isare> <count> outstanding <errmsg>
+        </h3>
+      </div>
+      <div class="panel-body">
+@     lzr,-2 ,,<hln>i3 .
+@0051:inc <hln>  rdl,-2,<hln>,0053 'msgs','field' <emsg>s,<field>s .
+@     srh,-1 'adl(¬)' 'field' ¬,<field> .
+@     srh,-0 'adn@l(¬)' 'msgs' ¬,@ .
+@     rnm -3 .
+        <ul>
+          <li><emsg>(p)</li>
+@     lzr,-3 <3lns>i3,,<3hln>i3  if <3lns> gt <3hln> . ; gto 0052 .
+            <ul>
+@     inc <3hln> .
+@     rdc,-3,<3hln> 'msgs' <fmsgs>s .
+              <li><fmsgs>(p)</li>
+            </ul>
+@0052:.
+        </ul>
+@     gto 0051 .
+@0053:.
+      </div>
+    </div>
+@     gto 0199 .
+@. ---- Flash Success Message ----
+@0055:.
+    <div class="flash success">
+@     rdc,-0,<hdg> 2-80 <success>s .
+         <success>(p)
+    </div>
+@     gto 0199 .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Determine if field is in error:
+@.    #  Will check the ErrorResult report to see if field exists and load error accordingly
+@.    #---------------------------------------------------------------------------------------------
+@0060:(<fld>,<valstate>) .
+@     rnm -1 .
+@     fdr,-1,,,lin+1 '' 'field' ¬,<fld>  ldv <valstate>='has-error' .
+@     ldv,p <valstate> .
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  NSERRORSCN_
+@.    #  This is triggered when something generally bad happens.
+@.    #  Cannot connect to other site, report not found, etc..
+@.    #---------------------------------------------------------------------------------------------
+@0100:(<msg>,<msg1>,<msg2>,<msg3>,<msg4>,<msg5>,<backlink>,<backwording>,<alertype>) .
+@     ldv <tmp>h1=<*gstatus> .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'-8','RETRIEVE') .
+@     if <*gstatus> eq 0  rnm -8  rsr,-8 0001 . ; .
+@.
+@     brk  brk,0,f,,y .
+@     ldv <pagetitle>s998='Error '<msg>(p) .
+@     if <msg> eq 'Your session has timed out'  ldv <pagetitle>s40='Session timeout' . ; .
+@     ldv,p <pagetitle> .
+@     rsl,-8  call,HTMLHEAD_ 0001 (<pagetitle>) .
+@     if <alertype> eq danger,error . ; gto lin+6 .
+@     if <ssok> eq X  ldv <hlp1>s80='If You Are Unable To Get Past This Error Message' \
+                      ldv <hlp2>s80=' Please Call OGA at 1-405-840-9393.' . ; \
+                      ldv <hlp1>s80='If you are unable to get past this error message feel free' \
+                      ldv <hlp2>s256=' to contact us at 1-800-622-5230 or',\
+                      <hlp2>=<hlp2>(p)' <a href="mailto:info@nstarco.com">info@nstarco.com</a>' .
+@.    #---------------------------------------------------------------------------------------------
+@.    #  A P P L I C A T I O N  H T M L  S T A R T
+@.    #---------------------------------------------------------------------------------------------
+
+  <div class="panel panel-<alertype>(p)">
+    <div class="panel-heading">
+      <h2><span class="glyphicon glyphicon-warning-sign"></span><msg>(p)<h2>
+    </div>
+    <div class="panel-body">
+    <ul class="list-unstyled">
+      <li><msg1></li>
+      <li><msg2></li>
+      <li><msg3></li>
+      <li><msg4></li>
+      <li><msg5></li>
+@     if <alertype> eq danger,error . ; gto lin+4 .
+      <li><br></li>
+      <li><lab><hlp1>(p) <hlp2>(p)</p></li>
+      <li><br></li>
+
+      <li>
+        <a href="<backlink>(p)" alt="previous page" class="btn btn-<alertype>(p)">
+          <backwording>(p)
+        </a>
+      </li>
+
+    </ul>
+
+    </div>
+  </div>
+
+@.    #---------------------------------------------------------------------------------------------
+@.    #  A P P L I C A T I O N  H T M L  E N D
+@.    #---------------------------------------------------------------------------------------------
+@     call,FOOTER_ 0001 () .
+@     ldv <*gstatus>=<tmp> .
+@     gto 0199 .
+@0199:.
+@     return .

@@ -1,0 +1,10 @@
+.Object Name: BREADCRUMBS_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@0001:() .
+  <ol class="breadcrumb hidden-print">
+    <li><a href="<%<*GUrlCat>(p)Home%>">Home</a></li>
+  </ol>
+@     RETURN .
+

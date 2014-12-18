@@ -1,0 +1,15 @@
+.Object Name: CONTAINER_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@.    #---------------------------------------------------------------------------------------------
+@.    #  CONTAINER_
+@.    #  Common application container html beginning and end
+@.    #---------------------------------------------------------------------------------------------
+@0001:() .
+<div class="inner-container clearfix"><!-- (<%LOCATION: ECAB$,AEDRW$,ERPT$%>) -->
+@     return .
+@0005:() .
+</div><!-- .inner-container -->
+@.
+@     return .

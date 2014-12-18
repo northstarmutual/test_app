@@ -1,0 +1,142 @@
+.Object Name: EXTASSETS_
+*    Version: 0001
+*===================================================================================================
+:INCLUDE,ECAB$,B,0001 .
+@.    This Service is used to RETRIEVE the location of an external file or image
+@.    and OUTPUT the results into the output area of the calling run.  For images
+@.    the path, width, and height are returned to the calling run.
+@.
+@.     -------------------------------------------------------------------------
+@.    |                                                                         |
+@.    | The <optatt> is an array that can be used for optional attributes       |
+@.    | and variables that weren't thought of in the initial development.       |
+@.    | Feel free to add as many as needed and designate them below for ref.    |
+@.    |                                                                         |
+@.    | <optatt>[1] <GUrlVirDir> full path for images on server                 |
+@.    | <optatt>[2] webscript    Will use standard <html> tags                  |
+@.    | <optatt>[3] iecondit     Use IE conditional comments. Only webscript = y|
+@.    | <optatt>[4] async        Load JavaScripts asynchronously                |
+@.    | <optatt>[5] open ...                                                    |
+@.    | <optatt>[?] open ... Add as many as needed                              |
+@.    |                                                                         |
+@.     -------------------------------------------------------------------------
+@.
+@.    ---- Call Entry Point ----
+@0010:(<type>,<file>,<optattr>,\
+       <GSvcHndCab>,<GSvcHndDrw>,<GIceRepCab>,<GAspAlsDir>) .
+@     gto 0013 .
+@.    ---- Entry Point without the need of ICE SVC Vars ----
+@0011:(<type>,<file>,<optattr>) .
+@     ldv <globals>h1=y .
+@.
+@0013:.
+@     rsr 0205 . Go Find the Table
+@.
+@.    ---- Optional Attributes ----
+@     if WEBBRK$ eq 1,2  ldv <webscript>h1=y .
+@     def,q <INDEX>i3,<optattr> .
+@     if <INDEX> gt 0 . ; gto 0014 .
+@     if <optattr>[2] eq webscript  ldv <webscript>h1=y .
+@     if <optattr>[3] ne '<optattr>[3]'  if <optattr>[3] gt ''  ldv <iecond>h1=y .
+@     if <optattr>[4] eq async      ldv <async>h5=async . ; ldv <async>s0 .
+@.
+@.    ---- External JavaScript Files ----
+@0014:if <type> eq JavaScript . ; gto 0020 .
+@.
+@     rsr 0200 . load the exteral file path
+@.
+@.    ---- Put External JavaScript file in OUTPUT AREA ----
+@     if <iecond> eq y . ; gto lin+2 .
+    <!--[if <%<optattr>[3]%>]>
+    <script type="text/javascript" src="<%<extFil>%>" <%<async>%>></script>
+@     if <iecond> eq y . ; gto lin+2 .
+    <![endif]-->
+@     gto 0100 .
+@.
+@.    ---- External CSS Files ----
+@.
+@0020:if <type> eq Stylesheet . ; gto 0100 .
+@.
+@     rsr 0200 . load the exteral file path
+@.
+@.    ---- Put External Stylesheet file in OUTPUT AREA ----
+@.
+@     if <media> eq '' ldv <media_tag>s0 . ; ldv,p <media_tag>s40='media="'<media>(p)'"' .
+@.
+@     if <iecond> eq y . ; gto lin+2 .
+    <!--[if <%<optattr>[3]%>]>
+    <link rel="stylesheet" type="text/css" <%<media_tag>%> href="<%<extFil>%>" />
+@     if <iecond> eq y . ; gto lin+2 .
+    <![endif]-->
+@     gto 0100 .
+@.
+@.    ---- External Images ----
+@.
+@0050:(<file>,<src>,<width>,<height>,<optattr>,\
+      <GSvcHndCab>,<GSvcHndDrw>,<GIceRepCab>,<GAspAlsDir>) .
+@     gto 0053 .
+@0051:(<file>,<src>,<width>,<height>,<optattr>) .
+@     ldv <globals>h1=y .
+@0053:.
+@     ldv <type>s6=Images rsr 0205 . Go Find the External_Images table
+@.
+@.    ---- Get the image (SRC WIDTH HEIGHT) ----
+@     ldv,p <file> .
+@     fdr,EXTASSETSTBLS_,<earpt> '' 'file' ¬,<file> .
+@     rln 'directory','folder','width','height' \
+        <virDir>s,<folder>s,<width>s,<height>s .
+@     def,c,lin2 <t>i2,<optattr>[1] if <t> eq ' 3',(lin2) .
+@     lcv,lin1 '' <optattr>[1] 'http' gto 0052 .            Different <src> for External Stylesheets
+@     if <globals> eq y  ldv <tmp>s80='*'<virDir>(p),<virDir>s256=<tmp> . ; .
+@     ldv,p <dir>s80=<<virDir>> .
+@     ldv <src>s256='../'<dir>'/',\
+          <src>=<src>(p)<folder>,\
+          <src>=<src>(p)<file> .
+@     gto 0055 . Skip External Stylesheets Image Tags
+@0052:ldv,p <dir>s256=<optattr>[01] .
+@     ldv <src>s256=<dir>'/',\
+          <src>=<src>(p)<folder>,\
+          <src>=<src>(p)<file> .
+@0055:ldv,p <src>,<width>,<height> .
+@.
+@     gto 0100 .
+@.
+@.    ---- Return back to calling run ----
+@0100:.
+@     return .
+@.
+@./                                                                            \
+@.---- S U B R O U T I N E S : Read the file info and build the path -----------
+@.\                                                                            /
+@0200:.
+@     fdr,EXTASSETSTBLS_,<earpt> '' 'file' ¬,<file> \
+        rln 'directory','folder','dl','version','extens','media' \
+             <virDir>s,<folder>s,<delim>h,<ver>i,<ext>s,<media>s .
+@     lcv,lin1 '' <virDir> '/'/'/' gto 0201 .
+@     if <globals> eq y  ldv <tmp>s80='*'<virDir>(p),<virDir>s256=<tmp> . ; .
+@     ldv,p <dir>s80=<<virDir>>,<ver> .
+@.    ---- Calling a local static file on our server ----
+@     ldv <extFil>s256='../'<dir>'/',\
+           <extFil>=<extFil>(p)<folder>,\
+           <extFil>=<extFil>(p)<file>,\
+           <extFil>=<extFil>(p)<delim>,\
+           <extFil>=<extFil>(p)<ver>,\
+           <extFil>=<extFil>(p)<ext> .
+@     gto 0204 .
+@.    ---- Calling a remote file not on our server or full path ----
+@0201:ldv <extFil>s256=<virdir>,\
+           <extFil>=<extFil>(p)<folder>,\
+           <extFil>=<extFil>(p)<file>,\
+           <extFil>=<extFil>(p)<delim>,\
+           <extFil>=<extFil>(p)<ver>,\
+           <extFil>=<extFil>(p)<ext> .
+@     gto 0204 .
+@0204:ldv,p <extFil> .
+@     esr .
+@.
+@.    ---- Locate the External_<type> File Table ----
+@0205:.
+@     if <type> eq JavaScript  ldv <earpt>i4=23 .
+@     if <type> eq Stylesheet  ldv <earpt>i4=24 .
+@     if <type> eq Images      ldv <earpt>i4=26 .
+@     esr .

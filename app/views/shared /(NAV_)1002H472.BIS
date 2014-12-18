@@ -1,0 +1,51 @@
+.Object Name: NAV_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@0001:() .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'-8','RESTORE') .
+@     rnm -8  rsr,-8 0001 .
+@.
+@     call,NSSTMGMTAPI_ getSS_ ('ssHOMEMENU', <ssHOMEMENU>s256) .
+@     call,NSSTMGMTAPI_ getSS_ ('nsCONTACT', <nsCONTACT>s256) .
+@     call,NSSTMGMTAPI_ getSS_ ('ssUSERID', <ssUSERID>h11) .
+@.
+      <!-- Application Navigation COMMON -->
+      <div class="navbar navbar-default app-ribbon">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse"
+             data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="<%<ssHOMEMENU>(p)%>">
+            <span class="glyphicon glyphicon-home"></span>
+            <%<ssHOMETITLE>(p)%>
+          </a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="<%<nsCONTACT>(p)%>">Contact Us</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+@     ldv <USER>h11=<ssUSERID> .
+@     if <GAspAlsDir> eq 'fieldstaff'  ldv <USER>h11=<ssNSUSER> . ; .
+@     if <GAspAlsDir> eq 'fieldstaff'  if <ssIMPERSON> eq true ldv <USER>h11=<SSUSERID> . ; .
+                <%<USER>%> <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="<%<nsLOGOFF>(p)%>" title="Sign Out" alt="Sign Out">
+                    <i class="icon-chevron-right"></i>Sign Out
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div><!-- /.navbar .app-ribon -->
+@.
+@     return .

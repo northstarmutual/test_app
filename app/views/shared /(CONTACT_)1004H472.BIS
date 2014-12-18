@@ -1,0 +1,33 @@
+.Object Name: CONTACT_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Contact Section:
+@.    #  This is a common routine to show the contact info on the right hand side of the page
+@.    #---------------------------------------------------------------------------------------------
+@0001:() .
+<div class="contact-container hidden-print hidden-sm hidden-md hidden-xs">
+  <h3 class="soft-hdg">Contact Us</h3>
+
+  <address>
+@   call,NSSTMGMTAPI_ getSS_ ('ssOA',<OKagent>h1) .
+@   if <OKagent> eq x,X gto 0010 .
+    <strong>North Star Mutual</strong><br>
+    <span title="Phone">Phone:</span> (800) 622-5230<br>
+    <span title="Fax">Fax:</span> (507) 423-6323
+@   gto 0020 .
+@0010:.
+    <strong>One General Agency</strong><br>
+    <span title="Phone">Phone:</span> (405) 840-9393<br>
+    <span title="Fax">Fax:</span> (405) 840-9388
+@0020:.
+  </address>
+
+  <address>
+    <strong>Support Email</strong><br>
+    <a href="mailto:info@northstarmutual.com">info@northstarmutual.com</a>
+  </address>
+
+</div><!-- .contact-container -->
+@     return .

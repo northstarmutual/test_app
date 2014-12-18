@@ -1,0 +1,65 @@
+.Object Name: home
+*    Version: 0001
+*
+*===================================================================================================
+:INCLUDE,ecab$,B,0001 .
+@     ldv <run>a1=Y .
+@     rer,0,E,2 0001  rar,0,E,2 0001 .
+@     rnm,ecab$,g,erpt$ -8 .
+@     gto lin+3 .
+@0001:() .                                        Entry point called by The Cool ICE Service Handler
+@     rnm -8  ldv <run>a1=n  if ecab$ lt 398 . ; rep,-8,ecab$,g,erpt$ .                    Result -8
+@     rsr,-8 0001 .                                                             Get Input Parameters
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  P A G E  I N I T
+@.    #---------------------------------------------------------------------------------------------
+@     rsr,NSCONFIG_ 0001 .                                                    Loads Global Variables
+@     rnm,-8 -0  call,NSSTMGMTAPI_ smRslt_ (<sessionid>,'-8','SAVE') .        Save Session Variables
+@     rsr,NSCONFIG_ 0002 .                                                         Handle User Logic
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  P A G E  M O D E L
+@.    #---------------------------------------------------------------------------------------------
+@     ldv <*model>s18='home' .
+@     fdr,MODELINDEX_ '' 'Model' ¬,<*model>  rln 'Rpt' <modelrpt>i .
+@.
+@     if <action> eq 'create','update','delete' . ; gto 0020 .
+@     brk,0,i  ldv <GResultName>s20='r-'<*model> .
+@     rsr,-8 0100 .
+@     rnm -3  lzr,-3 ,,<hln>i3 .
+@.
+@0020:rsr,MODEL_,<modelrpt> 0001 .
+@.
+@.    #  Redirect back for read action
+@     if <redirect> ne '<redirect>'  if <redirect> gt ' ' . ; gto 0100 .
+@     call,REDIRECT_ 0001 (<redirect>) .
+@     gto 0199 .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  A P P L I C A T I O N  H T M L  S T A R T
+@.    #---------------------------------------------------------------------------------------------
+@0100:brk,0,f,,y .
+@     ldv,p <pgtitle>s50='home' .
+@     rsl,-8  call,HTMLHEAD_ 0001 (<pgtitle>) .                                           HTML start
+@     call,HEADER_ 0001 (<pgtitle>) .                                           Page header and logo
+@     call,NAV_ 0001 () .
+@.
+@     call,CONTAINER_ 0001 () .                                                      Begin container
+@     call,BREADCRUMBS_ 0001 () .                                                         Breadcrubs
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  P A G E  V I E W
+@.    #---------------------------------------------------------------------------------------------
+@     fdr,VIEWINDEX_ '' 'View' ¬,'home'  rln 'Rpt' <viewrpt>i .
+@     rsr,VIEW_,<viewrpt>(p) 0001 .
+@.
+@     call,CONTACT_ 0001 () .
+@.
+@     call,CONTAINER_ 0005 () .                                                        End container
+@     call,FOOTER_ 0001 () .                                                          Load JS Assets
+@     gto 0199 .
+@.
+@.    #  Exit
+@0199:brk  if <run> eq y  dsp,-0 ; .                                            End HTML Output Area
+@     return .                                                Return to The Cool ICE Service Handler

@@ -1,0 +1,33 @@
+.Object Name: ALERTS_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@0001:() .
+@.
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'-8','RETRIEVE') .
+@     if <*gstatus> eq 9,(0004) .
+@     rsr,-0 0001 .
+@.
+@     srh,ALERTSTBL_ 'dp' 'category','service'  ¬,<category>,<service> .
+@     rnm -1 .
+@     srh,ALERTSTBL_ 'dp@' 'category','service'  ¬,<category>,'@' .
+@     add,-0,-1 .
+@     cal,-0 'ct' 'start','end'  ¬,a,b if:a<=DATE11$&b>=DATE11$ .
+@     lzr,-0,0004 <rlines>i4,,<hln>i7 .
+@     if <rlines> eq <hln>,(0004) .
+<div class="container">
+  <div class="strip">
+    <div class="row-fluid">
+      <div class="flexslider">
+        <ul class="slides unstyled">
+@     lzr,-0 ,<cc>i3 .
+@     rdc,-0,,,' ' 1-<cc> <message>s .
+        <message>
+        </ul>
+      </div><!-- /.flexslider -->
+    </div><!-- /.row-fluid -->
+  </div><!-- /.strip -->
+</div><!-- /.container -->
+@0004.
+@.
+@     return .

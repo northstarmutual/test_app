@@ -1,0 +1,57 @@
+.Object Name: REDIRECT_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ecab$,B,0001 .
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Page Redirect:
+@.    #  @.    #  Call at label 0001 for a standard meta redirect
+@.    #  @     call,REDIRECT_ 0001 (<url>) .
+@.    #---------------------------------------------------------------------------------------------
+@0001:(<url>) .
+@     brk,0,f,,y .
+@.
+<!DOCTYPE html>
+<head>
+@.     lda <optattr>h9[10],<optattr>[2]='webscript' .
+@.     CALL,NSEXTASSETS_ 0011* ('Stylesheet','main',<optattr>) .
+  <meta http-equiv="refresh" content="0;
+  url=<%<url>%>">
+</head>
+<body style="background-color: #3e4859;">
+</body>
+</html>
+@.
+@     return .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Page Redirect:
+@.    #  @.    #  Call at label 0005 for a redirect with messages
+@.    #  @     call,REDIRECT_ 0005 (<url>,<heading>,<waitmsg>) .
+@.    #---------------------------------------------------------------------------------------------
+@0005:(<url>,<heading>,<waitmsg>) .
+@     brk,0,f,,y .
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=IE7" >
+  <META HTTP-EQUIV="Refresh" CONTENT="0;
+  URL=<%<url>%>">
+  <title>North Star: Rating Quote</title>
+  <meta name="viewport" content="width=device-width">
+@     call,NSEXTASSETS_ 0011 ('stylesheet','main','') .
+</head>
+<body>
+
+  <div class="container">
+    <div class="jumbotron col-12 col-md-12" style="background-color: inherit">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <h1 class="text-center" style="font-size: 2em"><%<heading>(p)%></h1>
+          <h3 class="text-center"><%<waitmsg>(p)%></h3>
+        </div>
+      </div>
+    </div>
+  </div><!-- /.container -->
+
+</body>
+</html>
+@     return .

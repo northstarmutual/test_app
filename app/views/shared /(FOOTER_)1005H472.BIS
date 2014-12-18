@@ -1,0 +1,24 @@
+.Object Name: FOOTER_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@0001:() .
+@.
+</div><!-- .container -->
+@     call,LOADASSETS_ 0001 (<*Category>,<*Service>,'body') .
+@.
+@.    #  Clean up error results each time page is reloaded
+@     call,NSSTMGMTAPI_ getSS_ ('ssERRORRSLT',<errRslt>h1) .
+@     if <errRslt> eq y . ; gto lin+2 .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'ErrorResult','DESTROY') .         Remove Error Result
+@     call,NSSTMGMTAPI_ delSS_ ('ssERRORRSLT') .                                  Remove Session Var
+@.
+@.    #  Clean up the flash message
+@     call,NSSTMGMTAPI_ getSS_ ('ssFLASHRSLT',<flash>h1) .
+@     if <flash> eq y . ; gto lin+2 .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'FlashResult','DESTROY') .         Remove Error Result
+@     call,NSSTMGMTAPI_ delSS_ ('ssFLASHRSLT') .                                  Remove Session Var
+</body>
+</html>
+@.
+@     return .

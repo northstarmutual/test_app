@@ -1,0 +1,17 @@
+.Object Name: home
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@0001:.
+<div class="app-container">
+@     call,ERRORDSP_ .
+@     call,FLASHMSG_ .
+@     if <*gerrors> eq y . ; gto lin+3 .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'ErrorResult','RETRIEVE') .      Retrieve Error Result
+@     if <*GSTATUS> eq 0  rnm -5 .
+  <div class="jumbotron">
+   <h2>Welcome to the <b>test_app</b> application.
+  </div>
+</div><!-- .app-container -->
+@.
+@     esr .                                                ESR back to main page

@@ -1,0 +1,48 @@
+.Object Name: LOADASSETS_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@0001:(<category>,<service>,<load>) .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Load order will be dependent on the order of the items in the table
+@.    #---------------------------------------------------------------------------------------------
+@.
+@.    #  Category Specific Assets
+@     fdr,ASSETSINDX_,,,0003 '' 'category' ¬,<category> .
+@     rln,,0199 'rpt' <deprpt>i4 .
+@     srh,ASSETS_,<deprpt> 'dn@l( *)' 'file' ¬,@ .
+@     rnm -1 .                                                     Get Service Specific Dependencies
+@.
+@.    #  Service Specific Assets
+@0003:fdr,ASSETSINDX_,,,0004 '' 'category','service' ¬,<category>,<service> .
+@     rln,,0199 'rpt' <deprpt>i4 .
+@     srh,ASSETS_,<deprpt> 'dn@l( *)' 'file' ¬,@ .
+@     rnm -2 .                                                     Get Service Specific Dependencies
+@     mch,-1,-2 'dn' 'Type','File' ¬,1,2  'Type','File' ¬,1,2 .    Only those that dont match global
+@     add,-0,-1 .                                                                      Add to Global
+@     rnm -1 .
+@0004:.
+@     srh,-1 'dl(*)' 'load' ¬,<load> .                                           Either head or foot
+@     rnm -1  lzr,-1 ,,<hln>i7 .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Loop through each entry in either of the tables to load in the assets for this service
+@.    #---------------------------------------------------------------------------------------------
+@     lda <optattr>h9[10] .
+@0005:inc <hln>  rdl,-1,<hln>,0199 'type','file','ws','iecompat','async' \
+        <type>h,<file>s,<webscript>h,<iecompat>h,<async>h .
+@.
+@.    #  Enable web script params? <html> : [html]
+@     if <webscript> eq y  lda <optattr>[2]='webscript' . ; \
+                           lda <optattr>[2]='' .
+@.    #  Any special Internet Explorer Conditional Comments
+@     if <iecompat> gt ''  lda <optattr>[3]=<iecompat> . ; \
+                           lda <optattr>[3]='' .
+@.
+@.    #  Call the NSEXTASSETS_ module to actually put the file into the output area
+@     call,EXTASSETS_ 0011 (<type>,<file>,<optattr>) .
+@     gto 0005 .
+@.
+@.    # Exit
+@0199:return .

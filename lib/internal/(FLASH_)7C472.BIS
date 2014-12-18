@@ -1,0 +1,69 @@
+.Object Name: FLASH_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ecab$,B,0001 .
+@.    #---------------------------------------------------------------------------------------------
+@.    #  FlashMessage Routine:
+@.    #
+@.    #  call,FLASH_ 0001 (type, message) .
+@.    #
+@.    #  type: success, info, warning, danger
+@.    #  message: 120 character string
+@.    #
+@.    #  call,FLASH_ 0001 ('success', '<b>Well done!</b> You were successful.') .
+@.    #  call,FLASH_ 0001 ('info', '<b>Heads up!</b> This alert needs your attention.') .
+@.    #  call,FLASH_ 0001 ('warning', '<b>Warning!</b> Better check yourself.') .
+@.    #  call,FLASH_ 0001 ('danger', '<b>Danger!</b> Things about to go boom.') .
+@.    #---------------------------------------------------------------------------------------------
+@0001:(<flashtype>,<flashmsg>) .
+@     dvs,ICEFLASHMSGSTBL_ 'msgs' <msgfld>s  def,s <maxsz>i3,<msgfld> .
+@     def,s <sz>i3,<flashmsg>  if <sz> gt <maxsz> xxx . ; .
+@     call,NSSTMGMTAPI_ getSS_ ('ssFLASHRSLT',<flash>h1) .
+@     if <flash> eq '' . ; gto 0005 .
+@     brk,0,I .
+@     lzr,ICEFLASHMSGSTBL_ ,<cc>i3,<fln>i3  dec <fln> .
+@     rdc,ICEFLASHMSGSTBL_,2,<fln> 1-<cc> <hdgs>s .
+<hdgs>
+@0005:if <flash> eq 'y' . ; gto lin+3 .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'FlashResult','RESTORE') .           Save Error Result
+@     rnm -1 .
+¬<flashmsg>
+@     brk .
+@     lzr,-1,lin+1  add,-0,-1 .
+@     wrl,-0,2 32-12 .,<flashtype> .
+@     rnm -1 .
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'FlashResult','SAVE') .              Save Error Result
+@     if <flasht> eq y,(lin+2) .
+@     call,NSSTMGMTAPI_ setSS_ ('ssFLASHRSLT','Y') .
+@.
+@     gto 0199 .
+@.
+@.    #---------------------------------------------------------------------------------------------
+@.    #  Display Flash Messages
+@.    #
+@.    #  call,FLASHMSG_ () .
+@.    #---------------------------------------------------------------------------------------------
+@0050:() .
+@     call,NSSTMGMTAPI_ getSS_ ('ssFLASHRSLT',<flash>h1) .
+@     if <flash> eq '',(0199) .                                              Nothing to show... exit
+@     call,NSSTMGMTAPI_ smRslt_ (<*sessionid>,'FlashResult','RETRIEVE') .      Retrieve Error Result
+@     rnm -1 .
+@     fdr,-1,,,0199 '' 2-1 *,= ,<ln>i3 .
+@     srh,-1 'dn@l(*)' 'msgs(1-1)' ¬,@ .
+@     cnt,-0 'c' 'msgs' ¬,1 .
+@     rnm -2 .
+@     lzr,-1 ,,<hdg>i7  inc <hdg> .
+@     rdl,-1,2 32-12 <flashtype>h .
+    <div class="alert alert-<%<flashtype>(p)%>" role="alert">
+@     lzr,-2 ,,<hln>i3 .
+@0051:inc <hln>  rdl,-2,<hln>,0053 'msgs' <msgs>s .
+      <%<msgs>(p)%>
+@     gto 0051 .
+@0053:.
+    </div>
+@.
+@     gto 0199 .
+@.
+@.    #  Exit
+@0199:.
+@     return .

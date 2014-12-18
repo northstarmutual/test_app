@@ -1,0 +1,10 @@
+.Object Name: ASSETINDX_
+*                    .                    .    .                                        .
+*Category            .Service             .rpt .Desc                                    .
+*====================.====================.====.========================================.
+¬test_app            ¬                    ¬0003¬Default assets                          ¬
+
+ xxxxxxxxxxxxxxxxxxxx Specify category only to include all services under that category
+                      xxxxxxxxxxxxxxxxxxxx Include a service name for specific styling
+                                           xxxx Location of assets
+

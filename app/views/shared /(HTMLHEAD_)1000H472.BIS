@@ -1,0 +1,24 @@
+.Object Name: HTMLHEAD_
+*    Version: 0001
+*===============================================================================
+:INCLUDE,ECAB$,B,0001 .
+@0001:(<title>) .
+@.
+@     if <title> eq ''  ldv <title>s50=<*SvcTitle> . ; .
+@.
+<!doctype html>
+<!-- (<%LOCATION: ECAB$,AEDRW$,ERPT$%>) -->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title><% <title>(p) %></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+@     call,LOADASSETS_ 0001 (<*Category>,<*Service>,'head') .
+  </head>
+  <body>
+    <div class="container">
+@.
+@     return .                            Return to The Cool ICE Service Handler
