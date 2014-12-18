@@ -2,6 +2,6 @@
 *    .D.    .      .   .                    .                                                                               .
 *Cab .w.Rpt .Lines .Typ.Name                .Title                                                                          .
 *====.=.====.======.===.====================.===============================================================================.
-	 472 F    0     39 BIS
-	 472 F    1      9 BIS SVCINDEX_            SVCINDEX_
-	 472 F    2     66 BIS home                 home
+¬472  E    0     39 BIS
+¬472  E    1     12 BIS SCHEMAINDEX_
+¬472  E    2      8 BIS home                 home
